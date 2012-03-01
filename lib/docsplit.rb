@@ -72,6 +72,7 @@ module Docsplit
         `gm convert #{escaped_doc} #{escaped_out}/#{escaped_basename}.pdf`
       else
         options = "-jar #{ROOT}/vendor/jodconverter/jodconverter-core-3.0-beta-4.jar -r #{ROOT}/vendor/conf/document-formats.js"
+        options += " -p #{opts[:ooo_port]}" if opts[:ooo_port]
         run "#{options} #{escaped_doc} #{escaped_out}/#{escaped_basename}.pdf", [], {}
       end
     end

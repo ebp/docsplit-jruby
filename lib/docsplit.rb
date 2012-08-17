@@ -1,3 +1,5 @@
+require 'rbconfig'
+
 # The Docsplit module delegates to the Java PDF extractors.
 module Docsplit
 
@@ -14,7 +16,7 @@ module Docsplit
   office ||= "/usr/lib/openoffice" if File.exists? '/usr/lib/openoffice'
   office ||= "/usr/lib/libreoffice" if File.exists? '/usr/lib/libreoffice'
 
-  OFFICE        = RUBY_PLATFORM.match(/darwin/i) ? '' : "-Doffice.home=#{office}"
+  OFFICE        = Config::CONFIG['host_os'].match(/darwin/i) ? '' : "-Doffice.home=#{office}"
 
   METADATA_KEYS = [:author, :date, :creator, :keywords, :producer, :subject, :title, :length]
   

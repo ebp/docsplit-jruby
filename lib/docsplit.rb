@@ -16,7 +16,7 @@ module Docsplit
   office ||= "/usr/lib/openoffice" if File.exists? '/usr/lib/openoffice'
   office ||= "/usr/lib/libreoffice" if File.exists? '/usr/lib/libreoffice'
 
-  OFFICE        = Config::CONFIG['host_os'].match(/darwin/i) ? '' : "-Doffice.home=#{office}"
+  OFFICE        = RbConfig::CONFIG['host_os'].match(/darwin/i) ? '' : "-Doffice.home=#{office}"
 
   METADATA_KEYS = [:author, :date, :creator, :keywords, :producer, :subject, :title, :length]
   

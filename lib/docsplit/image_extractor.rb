@@ -48,7 +48,11 @@ module Docsplit
         end
       end
     ensure
-      FileUtils.remove_entry_secure tempdir if File.exists?(tempdir)
+      if defined?(JRUBY_VERSION) && JRUBY_VERSION =~ /1\.6\.7/
+        FileUtils.rm_r tempdir if File.exists?(tempdir)
+      else
+        FileUtils.remove_entry_secure tempdir if File.exists?(tempdir)
+      end
     end
 
 

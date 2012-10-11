@@ -68,7 +68,12 @@ module Docsplit
           run "MAGICK_TMPDIR=#{tempdir} OMP_NUM_THREADS=2 gm convert -despeckle +adjoin #{MEMORY_ARGS} #{OCR_FLAGS} #{escaped_pdf}[#{page - 1}] #{escaped_tiff} 2>&1"
           run "tesseract #{escaped_tiff} #{ESCAPE[file]} -l #{@language} 2>&1"
           clean_text(file + '.txt') if @clean_ocr
-          FileUtils.remove_entry_secure tiff
+
+          if defined?(JRUBY_VERSION) && JRUBY_VERSION =~ /1\.6\.7/
+            FileUtils.rm_r tiff
+          else
+            FileUtils.remove_entry_secure tiff
+          end
         end
       else
         tiff = "#{tempdir}/#{@pdf_name}.tif"
@@ -78,7 +83,11 @@ module Docsplit
         clean_text(base_path + '.txt') if @clean_ocr
       end
     ensure
-      FileUtils.remove_entry_secure tempdir if File.exists?(tempdir)
+      if defined?(JRUBY_VERSION) && JRUBY_VERSION =~ /1\.6\.7/
+        FileUtils.rm_r tempdir if File.exists?(tempdir)
+      else
+        FileUtils.remove_entry_secure tempdir if File.exists?(tempdir)
+      end
     end
 
 

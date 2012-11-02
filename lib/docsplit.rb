@@ -73,9 +73,13 @@ module Docsplit
       if GM_FORMATS.include?(`file -b --mime #{ESCAPE[doc]}`.strip.split(/[:;]\s+/)[0])
         `gm convert #{escaped_doc} #{escaped_out}/#{escaped_basename}.pdf`
       else
-        options = "-jar #{ROOT}/vendor/jodconverter/jodconverter-core-3.0-beta-4.jar -r #{ROOT}/vendor/conf/document-formats.js"
-        options += " -p #{opts[:ooo_port]}" if opts[:ooo_port]
-        run "#{options} #{escaped_doc} #{escaped_out}/#{escaped_basename}.pdf", [], {}
+        if defined?(JRUBY_VERSION)
+          JavaConverter.convert doc, "#{out}/#{basename}.pdf"
+        else
+          options = "-jar #{ROOT}/vendor/jodconverter/jodconverter-core-3.0-beta-4.jar -r #{ROOT}/vendor/conf/document-formats.js"
+          options += " -p #{opts[:ooo_port]}" if opts[:ooo_port]
+          run "#{options} #{escaped_doc} #{escaped_out}/#{escaped_basename}.pdf", [], {}
+        end
       end
     end
   end
@@ -129,3 +133,4 @@ require "#{Docsplit::ROOT}/lib/docsplit/text_extractor"
 require "#{Docsplit::ROOT}/lib/docsplit/page_extractor"
 require "#{Docsplit::ROOT}/lib/docsplit/info_extractor"
 require "#{Docsplit::ROOT}/lib/docsplit/text_cleaner"
+require "#{Docsplit::ROOT}/lib/docsplit/java_converter" if defined?(JRUBY_VERSION)

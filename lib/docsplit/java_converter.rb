@@ -29,7 +29,7 @@ module Docsplit
         @lock.synchronize do
           @manager ||= begin
                          config = org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration.new
-                         config.setOfficeHome(Docsplit::OFFICE) if Docsplit::OFFICE.length > 0
+                         config.setOfficeHome(Docsplit::OFFICE_HOME) if Docsplit::OFFICE_HOME.length > 0
                          mgr = config.buildOfficeManager
                          mgr.start
                          mgr

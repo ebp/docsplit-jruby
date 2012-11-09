@@ -15,6 +15,7 @@ module Docsplit
 
   office ||= "/usr/lib/openoffice" if File.exists? '/usr/lib/openoffice'
   office ||= "/usr/lib/libreoffice" if File.exists? '/usr/lib/libreoffice'
+  OFFICE_HOME   = office || ''
 
   OFFICE        = RbConfig::CONFIG['host_os'].match(/darwin/i) ? '' : "-Doffice.home=#{office}"
 

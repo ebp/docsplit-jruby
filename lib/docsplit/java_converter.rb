@@ -5,6 +5,8 @@ module Docsplit
     at_exit { JavaConverter.stop }
 
     @@lock = Mutex.new
+    @@converter = nil
+    @@manager = nil
 
     def self.convert(source, destination)
       converter.convert(java.io.File.new(source), java.io.File.new(destination))

@@ -4,44 +4,45 @@ module Docsplit
   class JavaConverter
     at_exit { JavaConverter.stop }
 
-    @lock = Mutex.new
+    @@lock = Mutex.new
 
-    class << self
+    def self.convert(source, destination)
+      converter.convert(java.io.File.new(source), java.io.File.new(destination))
+    end
 
-      def convert(source, destination)
-        converter = org.artofsolving.jodconverter.OfficeDocumentConverter.new(manager, format_registry)
-        converter.convert(java.io.File.new(source), java.io.File.new(destination))
-      end
+    def self.start
+      converter && true
+    end
 
-      def stop
-        @lock.synchronize do
-          if @manager
-            @manager.stop
-            @manager = nil
-          end
+    def self.stop
+      @@lock.synchronize do
+        if @@manager
+          @@manager.stop
+          @@manager = nil
         end
-        true
+        @@converter = nil
       end
+      true
+    end
 
-      private
+    private
 
-      def manager
-        @lock.synchronize do
-          @manager ||= begin
-                         config = org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration.new
-                         config.setOfficeHome(Docsplit::OFFICE_HOME) if Docsplit::OFFICE_HOME.length > 0
-                         mgr = config.buildOfficeManager
-                         mgr.start
-                         mgr
-                       end
+    def self.converter
+      @@lock.synchronize do
+        unless @@converter
+          config = org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration.new
+          config.setOfficeHome(Docsplit::OFFICE_HOME) if Docsplit::OFFICE_HOME.length > 0
+          @@manager = config.buildOfficeManager
+          @@manager.start
+
+          format_registry =
+            org.artofsolving.jodconverter.document.JsonDocumentFormatRegistry.new(
+              File.read("#{Docsplit::ROOT}/vendor/conf/document-formats.js")
+          )
+          @@converter = org.artofsolving.jodconverter.OfficeDocumentConverter.new(@@manager, format_registry)
         end
       end
-
-      def format_registry
-        @lock.synchronize do
-          @format_registry ||= org.artofsolving.jodconverter.document.JsonDocumentFormatRegistry.new(File.read("#{Docsplit::ROOT}/vendor/conf/document-formats.js"))
-        end
-      end
+      @@converter
     end
   end
 end

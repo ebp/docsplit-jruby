@@ -13,8 +13,9 @@ module Docsplit
 
   HEADLESS      = "-Djava.awt.headless=true"
 
-  office ||= "/usr/lib/openoffice" if File.exists? '/usr/lib/openoffice'
-  office ||= "/usr/lib/libreoffice" if File.exists? '/usr/lib/libreoffice'
+  office   = ENV['OFFICE_HOME']
+  office ||= '/usr/lib/libreoffice' if File.exists? '/usr/lib/libreoffice'
+  office ||= '/usr/lib/openoffice'  if File.exists? '/usr/lib/openoffice'
   OFFICE_HOME   = office || ''
 
   OFFICE        = RbConfig::CONFIG['host_os'].match(/darwin/i) ? '' : "-Doffice.home=#{office}"
